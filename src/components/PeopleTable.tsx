@@ -4,6 +4,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { FILTER_KEYS } from '../constants/filters';
 import { SearchLink } from './SearchLink';
+import { SearchParams } from '../utils/searchHelper';
 
 /* eslint-disable jsx-a11y/control-has-associated-label */
 interface Props {
@@ -21,15 +22,20 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
     const isSorted = sort === field;
     const isDesc = isSorted && order === 'desc';
 
+    let nextParams: SearchParams;
+
+    if (!isSorted) {
+      nextParams = { [FILTER_KEYS.sort]: field, [FILTER_KEYS.order]: null };
+    } else if (!isDesc) {
+      nextParams = { [FILTER_KEYS.sort]: field, [FILTER_KEYS.order]: 'desc' };
+    } else {
+      nextParams = { [FILTER_KEYS.sort]: null, [FILTER_KEYS.order]: null };
+    }
+
     return (
       <span className="is-flex is-flex-wrap-nowrap">
         {label}
-        <SearchLink
-          params={{
-            [FILTER_KEYS.sort]: field,
-            [FILTER_KEYS.order]: isSorted && !isDesc ? 'desc' : null,
-          }}
-        >
+        <SearchLink params={nextParams}>
           <span className="icon">
             <i
               className={classNames('fas', {
@@ -75,7 +81,10 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
             >
               <td>
                 <Link
-                  to={`/people/${person.slug}`}
+                  to={{
+                    pathname: `/people/${person.slug}`,
+                    search: searchParams.toString(),
+                  }}
                   className={classNames({
                     'has-text-danger': person.sex === 'f',
                   })}
@@ -89,7 +98,10 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
               <td>
                 {mother ? (
                   <Link
-                    to={`/people/${mother?.slug}`}
+                    to={{
+                      pathname: `/people/${mother?.slug}`,
+                      search: searchParams.toString(),
+                    }}
                     className="has-text-danger"
                   >
                     {person.motherName}
@@ -100,7 +112,14 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
               </td>
               <td>
                 {father ? (
-                  <Link to={`/people/${father.slug}`}>{person.fatherName}</Link>
+                  <Link
+                    to={{
+                      pathname: `/people/${father.slug}`,
+                      search: searchParams.toString(),
+                    }}
+                  >
+                    {person.fatherName}
+                  </Link>
                 ) : (
                   <span>{person.fatherName ? person.fatherName : '-'}</span>
                 )}

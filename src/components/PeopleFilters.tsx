@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FILTER_KEYS } from '../constants/filters';
-import { SearchLink } from './SearchLink'; // Твой новый компонент
+import { SearchLink } from './SearchLink';
 import { getSearchWith } from '../utils/searchHelper';
 
 const CENTURIES = ['16', '17', '18', '19', '20'];
@@ -25,7 +25,6 @@ export const PeopleFilters = () => {
     <nav className="panel">
       <p className="panel-heading">Filters</p>
 
-      {/* Выбор пола через SearchLink */}
       <p className="panel-tabs" data-cy="SexFilter">
         <SearchLink
           className={classNames({ 'is-active': !sexParam })}
@@ -47,7 +46,6 @@ export const PeopleFilters = () => {
         </SearchLink>
       </p>
 
-      {/* Поиск оставляем через input + setSearchParams (так как нам нужен мгновенный ввод) */}
       <div className="panel-block">
         <p className="control has-icons-left">
           <input
@@ -58,7 +56,6 @@ export const PeopleFilters = () => {
             value={inputValue}
             onChange={e => {
               setInputValue(e.target.value);
-              // Для инпута SearchLink не подходит, используем старый добрый метод
               setSearchParams(
                 getSearchWith(searchParams, {
                   [FILTER_KEYS.query]: e.target.value || null,
@@ -73,7 +70,6 @@ export const PeopleFilters = () => {
         </p>
       </div>
 
-      {/* Века через SearchLink */}
       <div className="panel-block">
         <div className="level is-flex-grow-1 is-mobile" data-cy="CenturyFilter">
           <div className="level-left">
@@ -110,13 +106,14 @@ export const PeopleFilters = () => {
       </div>
 
       <div className="panel-block">
-        {/* Сброс тоже можно сделать через SearchLink, передав null во все ключи */}
         <SearchLink
           className="button is-link is-outlined is-fullwidth"
           params={{
             [FILTER_KEYS.query]: null,
             [FILTER_KEYS.sex]: null,
             [FILTER_KEYS.centuries]: null,
+            [FILTER_KEYS.sort]: null,
+            [FILTER_KEYS.order]: null,
           }}
         >
           Reset all filters
